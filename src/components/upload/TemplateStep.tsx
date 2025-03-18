@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Upload, Loader2 } from 'lucide-react';
 import { api } from '../../utils/api';
+import './TemplateStep.css';
 
 interface TemplateResponse {
-  data: string[][];
   template_contents: string;
 }
 
@@ -11,13 +11,14 @@ interface TemplateStepProps {
   template: File | null;
   onTemplateUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onNext: () => void;
-  onTableData: (data: string[][]) => void;
+  onTableData: (htmlContent: string) => void;
 }
 
 export function TemplateStep({ template, onTemplateUpload, onTableData }: TemplateStepProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [tableHtml, setTableHtml] = useState<string | null>(null);
 
   const processTemplate = async (file: File) => {
     setIsProcessing(true);
@@ -29,8 +30,9 @@ export function TemplateStep({ template, onTemplateUpload, onTableData }: Templa
       const response = await api.post('/upload/template', formData);
       const data = response as TemplateResponse;
       
-      if (Array.isArray(data.data) && data.data.length > 0) {
-        onTableData(data.data);
+      if (data.template_contents) {
+        setTableHtml(data.template_contents);
+        onTableData(data.template_contents);
       } else {
         throw new Error('Invalid data format received from server');
       }
@@ -82,8 +84,9 @@ export function TemplateStep({ template, onTemplateUpload, onTableData }: Templa
       e.preventDefault();
       
       // Handle image paste
-      if (e.clipboardData?.files.length > 0) {
-        const file = e.clipboardData.files[0];
+      const files = e.clipboardData?.files;
+      if (files && files.length > 0) {
+        const file = files[0];
         await processFile(file);
         return;
       }
@@ -161,6 +164,17 @@ export function TemplateStep({ template, onTemplateUpload, onTableData }: Templa
             <Loader2 className="w-5 h-5 animate-spin" />
             <span>Processing {template?.name}...</span>
           </div>
+        </div>
+      )}
+
+      {/* Table Preview */}
+      {tableHtml && (
+        <div className="mt-6 border rounded-lg p-4 overflow-x-auto">
+          <h3 className="text-lg font-medium text-gray-900 mb-4">Template Preview</h3>
+          <div 
+            className="template-table"
+            dangerouslySetInnerHTML={{ __html: tableHtml }}
+          />
         </div>
       )}
 

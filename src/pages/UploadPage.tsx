@@ -5,7 +5,7 @@ import { EmailModal } from '../components/EmailModal';
 import { SuccessModal } from '../components/SuccessModal';
 import { LoadingModal } from '../components/LoadingModal';
 import { TemplateStep } from '../components/upload/TemplateStep';
-import { MappingStep } from '../components/upload/MappingStep';
+import { MappingStep, TableData } from '../components/upload/MappingStep';
 import { DocumentationStep } from '../components/upload/DocumentationStep';
 import { FileUp, Map, FileText, X } from 'lucide-react';
 import { useProcessing } from '../hooks/useProcessing';
@@ -17,10 +17,8 @@ interface UploadState {
   template: File | null;
   docs: File[];
   instructions: string;
-  tableData: {
-    headers: string[];
-    rows: string[][];
-  } | null;
+  tableHTML?: string;
+  mappingData?: string[];
   mappingComplete: boolean;
 }
 
@@ -37,7 +35,6 @@ export function UploadPage({ onComplete, setCurrentStep }: UploadPageProps) {
     template: null,
     docs: [],
     instructions: '',
-    tableData: null,
     mappingComplete: false
   });
   const [currentTab, setCurrentTab] = useState<TabType>('template');
@@ -78,17 +75,9 @@ export function UploadPage({ onComplete, setCurrentStep }: UploadPageProps) {
     }
   };
 
-  const handleTableDataReceived = (data: string[][]) => {
-    if (data.length > 0) {
-      setUploadState(prev => ({
-        ...prev,
-        tableData: {
-          headers: data[0],
-          rows: data.slice(1)
-        }
-      }));
-      setCurrentTab('mapping');
-    }
+  const handleTableDataReceived = (htmlContent: string) => {
+    setUploadState(prev => ({ ...prev, tableHTML: htmlContent }));
+    setCurrentTab('mapping');
   };
 
   const handleDocsUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -115,7 +104,7 @@ export function UploadPage({ onComplete, setCurrentStep }: UploadPageProps) {
   };
 
   const handleProcessTemplate = () => {
-    if (!uploadState.template || !uploadState.tableData) {
+    if (!uploadState.template || !uploadState.tableHTML) {
       alert('Please upload a template first');
       return;
     }
@@ -126,15 +115,15 @@ export function UploadPage({ onComplete, setCurrentStep }: UploadPageProps) {
   const handleEmailSubmit = async (email: string) => {
     setUserEmail(email);
     
-    if (!uploadState.tableData) {
-      setUploadError('No template data available');
+    if (!uploadState.mappingData) {
+      setUploadError('No mapping data available');
       return;
     }
 
     const success = await processData(
       uploadState.docs,
       email,
-      [uploadState.tableData.headers, ...uploadState.tableData.rows]
+      uploadState.mappingData
     );
 
     if (success) {
@@ -147,7 +136,7 @@ export function UploadPage({ onComplete, setCurrentStep }: UploadPageProps) {
     setUploadState(prev => ({ 
       ...prev, 
       mappingComplete: true,
-      tableData: updatedTableData
+      tableHTML: updatedTableData.tableHTML
     }));
     setCurrentTab('documentation');
   };
@@ -229,10 +218,17 @@ export function UploadPage({ onComplete, setCurrentStep }: UploadPageProps) {
                   onTableData={handleTableDataReceived}
                 />
               )}
-              {currentTab === 'mapping' && uploadState.tableData && (
+              {currentTab === 'mapping' && uploadState.tableHTML && (
                 <MappingStep
-                  tableData={uploadState.tableData}
-                  onNext={handleMappingComplete}
+                  tableHTML={uploadState.tableHTML}
+                  onNext={(selectedMapping: string[]) => {
+                    setUploadState(prev => ({
+                      ...prev,
+                      mappingComplete: true,
+                      mappingData: selectedMapping
+                    }));
+                    setCurrentTab('documentation');
+                  }}
                 />
               )}
               {currentTab === 'documentation' && (

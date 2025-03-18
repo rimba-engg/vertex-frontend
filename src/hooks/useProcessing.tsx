@@ -10,7 +10,7 @@ export function useProcessing() {
   const processData = async (
     supportingFiles: File[],
     email: string,
-    previewData: string[][]
+    mappingData: string[]
   ) => {
     if (supportingFiles.length === 0 || !email) return;
     
@@ -29,10 +29,10 @@ export function useProcessing() {
       const uploadResponse = await api.post('/upload/attachment', formData);
       if (uploadResponse.status === 500) throw new Error('Failed to upload attachments');
 
-      // Step 2: Specify template
-      setProcessingStep('Processing template...');
+      // Step 2: Specify template mapping using the selected cell IDs.
+      setProcessingStep('Processing template mapping...');
       const formData1 = new FormData();
-      const template_contents = JSON.stringify(previewData);
+      const template_contents = JSON.stringify(mappingData);
       formData1.append('template_contents', template_contents);
       
       const templateResponse = await api.post('/template/specify', formData1);

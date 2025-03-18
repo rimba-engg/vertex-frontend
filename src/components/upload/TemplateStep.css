@@ -1,0 +1,32 @@
+.template-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+
+.template-table th,
+.template-table td {
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+}
+
+.template-table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+}
+
+.template-table tr:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.template-table tr:hover {
+  background-color: #f3f4f6;
+}
+
+/* Style cells that need to be filled */
+.template-table td:contains("FILL") {
+  background-color: #fef3c7;
+  font-weight: 600;
+} 
