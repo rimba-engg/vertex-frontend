@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import './MappingStep.css';
 // Removed unused import of Download if not needed
 // import { Download } from 'lucide-react';
 
@@ -90,11 +91,15 @@ export function MappingStep({ tableHTML, onNext }: MappingStepProps) {
 
   return (
     <div className="space-y-4">
-      <h2>Mapping Step</h2>
-      <p>Select the table cells you wish to map.</p>
+      <p className="text-gray-600">Select cells in the table that need to be filled by AI.</p>
       {/* Render the table via innerHTML */}
       <div ref={containerRef} />
-      <button onClick={handleNext} className="btn btn-primary">
+      <button onClick={handleNext} 
+      className={`flex-1 p-3 rounded-lg font-semibold ${
+        selectedCells.length > 0
+          ? 'bg-primary-600 text-white hover:bg-primary-700'
+          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+      } transition-colors`}>
         Next
       </button>
     </div>
