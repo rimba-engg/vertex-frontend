@@ -29,4 +29,10 @@
 .template-table td:contains("FILL") {
   background-color: #fef3c7;
   font-weight: 600;
+}
+
+/* Added styling for selected cells */
+.template-table td.selected {
+  background-color: #fef3c7;
+  font-weight: 600;
 } 

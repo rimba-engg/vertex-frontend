@@ -63,17 +63,24 @@ export function MappingStep({ tableHTML, onNext }: MappingStepProps) {
     const cellId = cell.getAttribute('id');
     if (!cellId) return;
 
-    setSelectedCells((prevSelectedCells) => {
-      if (prevSelectedCells.includes(cellId)) {
-        // Remove from selection.
-        cell.classList.remove('selected');
-        return prevSelectedCells.filter(id => id !== cellId);
-      } else {
-        // Add to selection.
-        cell.classList.add('selected');
-        return [...prevSelectedCells, cellId];
+    if (cell.classList.contains('selected')) {
+      // When deselecting, remove the class and restore the original text.
+      cell.classList.remove('selected');
+      const originalText = cell.getAttribute('data-original-text');
+      if (originalText !== null) {
+        cell.innerText = originalText;
       }
-    });
+      setSelectedCells((prev) => prev.filter(id => id !== cellId));
+    } else {
+      // When selecting, store the original text (if not already stored),
+      // replace the cell text with "FILL" and add the "selected" class.
+      if (!cell.hasAttribute('data-original-text')) {
+        cell.setAttribute('data-original-text', cell.innerText);
+      }
+      cell.innerText = "FILL";
+      cell.classList.add('selected');
+      setSelectedCells((prev) => [...prev, cellId]);
+    }
   };
 
   const handleNext = () => {
