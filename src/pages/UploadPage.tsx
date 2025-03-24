@@ -268,6 +268,7 @@ export function UploadPage({ onComplete, setCurrentStep }: UploadPageProps) {
         onClose={() => {
           setShowSuccessModal(false);
           onComplete();
+          resetSessionId();
         }}
         email={userEmail}
       />
