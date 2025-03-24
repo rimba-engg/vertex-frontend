@@ -114,7 +114,7 @@ export function DocumentationStep({
         <p className="text-sm text-red-500">
           Please upload at least one supporting document
         </p>
-      )}
+      )} 
     </div>
   );
 }
