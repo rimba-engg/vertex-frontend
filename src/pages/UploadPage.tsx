@@ -123,6 +123,7 @@ export function UploadPage({ onComplete, setCurrentStep }: UploadPageProps) {
     const success = await processData(
       uploadState.docs,
       email,
+      uploadState.instructions,
       uploadState.mappingData
     );
 
