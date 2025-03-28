@@ -10,6 +10,7 @@ export function useProcessing() {
   const processData = async (
     supportingFiles: File[],
     email: string,
+    instructions: string,
     mappingData: string[]
   ) => {
     if (supportingFiles.length === 0 || !email) return;
@@ -42,6 +43,7 @@ export function useProcessing() {
       setProcessingStep('Configuring...');
       const formData2 = new FormData();
       formData2.append('email', email);
+      formData2.append('instructions', instructions);
       const configResponse = await api.post('/config', formData2);
       if (configResponse.status === 500) throw new Error('Failed to configure');
 
