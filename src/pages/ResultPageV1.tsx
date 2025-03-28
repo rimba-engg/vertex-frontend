@@ -58,7 +58,7 @@ export function ResultPageV1() {
     <div className="min-h-screen flex flex-col">
       <Navbar onNavigateHome={() => navigate('/')} />
       <div className="flex-grow bg-gradient-to-b from-primary-50 to-white">
-        <div className="max-w-7xl mx-auto py-12 px-4">
+        <div className="w-screen mx-auto py-4 px-8">
           <div className="flex flex-col lg:flex-row gap-6">
             {/* Main Document Section */}
             <div className={`bg-white rounded-2xl shadow-xl overflow-hidden flex-grow transition-all ${isDetailsOpen ? 'lg:w-2/3' : 'w-full'}`}>
