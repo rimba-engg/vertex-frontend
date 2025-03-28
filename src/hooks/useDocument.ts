@@ -18,6 +18,7 @@ export interface DocumentData {
   generalFeedback: string;
   feedbackState: 'initial' | 'positive' | 'negative';
   presigned_url?: string;
+  template_filling_details?: string;
 }
 
 export function useDocument(sessionId: string) {
@@ -43,7 +44,8 @@ export function useDocument(sessionId: string) {
         feedback: [],
         generalFeedback: '',
         feedbackState: 'initial',
-        presigned_url: response.presigned_url
+        presigned_url: response.presigned_url,
+        template_filling_details: response?.template_filling_details
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load document');
